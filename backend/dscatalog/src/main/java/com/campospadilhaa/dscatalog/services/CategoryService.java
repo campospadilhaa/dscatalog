@@ -11,18 +11,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.campospadilhaa.dscatalog.dto.CategoryDTO;
 import com.campospadilhaa.dscatalog.entities.Category;
 import com.campospadilhaa.dscatalog.repositories.CategoryRepository;
-import com.campospadilhaa.dscatalog.services.exceptions.EntityNotFoundException;
+import com.campospadilhaa.dscatalog.services.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class CategoryService {
 
 	@Autowired
-	private CategoryRepository repository;
+	private CategoryRepository categoryRepository;
 
 	@Transactional(readOnly = true)
 	public List<CategoryDTO> findAll(){
 
-		List<Category> listCategory = repository.findAll();
+		List<Category> listCategory = categoryRepository.findAll();
 
 		List<CategoryDTO> listCategoryDTO =
 				listCategory
@@ -36,13 +38,13 @@ public class CategoryService {
 	@Transactional(readOnly = true)
 	public CategoryDTO findById(Long id){
 
-		Optional<Category> optCategory = repository.findById(id);
+		Optional<Category> optCategory = categoryRepository.findById(id);
 
 		// Category category = optCategory.get();
 
 		Category category =
 				optCategory
-					.orElseThrow( () -> new EntityNotFoundException("Categoria não encontrada") );
+					.orElseThrow( () -> new ResourceNotFoundException("Categoria não encontrada") );
 
 		CategoryDTO categoryDTO = new CategoryDTO(category);
 
@@ -55,8 +57,26 @@ public class CategoryService {
 		Category category = new Category();
 		category.setName(categoryDTO.getName());
 
-		category = repository.save(category);
+		category = categoryRepository.save(category);
 
 		return new CategoryDTO(category);
+	}
+
+	@Transactional
+	public CategoryDTO update(Long id, CategoryDTO categoryDTO) {
+
+		try {
+			
+			Category category = categoryRepository.getReferenceById(id);
+			category.setName(categoryDTO.getName());
+
+			category = categoryRepository.save(category);
+
+			return new CategoryDTO(category);
+
+		} catch (EntityNotFoundException e) {
+
+			throw new ResourceNotFoundException("Categoria não encontrada: " + id);
+		}
 	}
 }
