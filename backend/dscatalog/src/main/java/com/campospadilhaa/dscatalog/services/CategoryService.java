@@ -5,12 +5,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.campospadilhaa.dscatalog.dto.CategoryDTO;
 import com.campospadilhaa.dscatalog.entities.Category;
 import com.campospadilhaa.dscatalog.repositories.CategoryRepository;
+import com.campospadilhaa.dscatalog.services.exceptions.DatabaseException;
 import com.campospadilhaa.dscatalog.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -66,7 +70,8 @@ public class CategoryService {
 	public CategoryDTO update(Long id, CategoryDTO categoryDTO) {
 
 		try {
-			
+
+			// instancia um objeto sem ir ao banco de dados
 			Category category = categoryRepository.getReferenceById(id);
 			category.setName(categoryDTO.getName());
 
@@ -78,5 +83,34 @@ public class CategoryService {
 
 			throw new ResourceNotFoundException("Categoria não encontrada: " + id);
 		}
+	}
+
+	/* substituído pelo método abaixo com o acréscimo do controle "existsById"
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public void delete(Long id) {
+	    try {
+	    	categoryRepository.deleteById(id);
+	    }
+	    catch (EmptyResultDataAccessException e) {
+	        throw new ResourceNotFoundException("Categoria não encontrada");
+	    }
+	    catch (DataIntegrityViolationException e) {
+	        throw new DatabaseException("Falha ao excluir a categoria, existem registros relacionados");
+	    }
+	}*/
+
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public void delete(Long id) {
+
+		if (!categoryRepository.existsById(id)) {
+			throw new ResourceNotFoundException("Categoria não encontrada");
+		}
+
+		try {
+			categoryRepository.deleteById(id);    		
+		}
+    	catch (DataIntegrityViolationException e) {
+        	throw new DatabaseException("Falha ao excluir a categoria, existem registros relacionados");
+	   	}
 	}
 }
