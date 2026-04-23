@@ -1,12 +1,11 @@
 package com.campospadilhaa.dscatalog.services;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +24,7 @@ public class CategoryService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
+	/*
 	@Transactional(readOnly = true)
 	public List<CategoryDTO> findAll(){
 
@@ -35,6 +35,17 @@ public class CategoryService {
 					.stream()
 					.map(category -> new CategoryDTO(category))
 					.collect(Collectors.toList());
+
+		return listCategoryDTO;
+	}*/
+
+	public Page<CategoryDTO> findAllPaged(PageRequest pageRequest){
+
+		Page<Category> listCategory = categoryRepository.findAll(pageRequest);
+
+		Page<CategoryDTO> listCategoryDTO =
+				listCategory
+					.map(category -> new CategoryDTO(category));
 
 		return listCategoryDTO;
 	}
