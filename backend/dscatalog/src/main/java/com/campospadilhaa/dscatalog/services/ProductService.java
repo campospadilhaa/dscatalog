@@ -10,8 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.campospadilhaa.dscatalog.dto.CategoryDTO;
 import com.campospadilhaa.dscatalog.dto.ProductDTO;
+import com.campospadilhaa.dscatalog.entities.Category;
 import com.campospadilhaa.dscatalog.entities.Product;
+import com.campospadilhaa.dscatalog.repositories.CategoryRepository;
 import com.campospadilhaa.dscatalog.repositories.ProductRepository;
 import com.campospadilhaa.dscatalog.services.exceptions.DatabaseException;
 import com.campospadilhaa.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -23,6 +26,9 @@ public class ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
 
 	public Page<ProductDTO> findAllPaged(PageRequest pageRequest){
 
@@ -55,7 +61,7 @@ public class ProductService {
 	public ProductDTO insert(ProductDTO productDTO) {
 
 		Product product = new Product();
-		//product.setName(productDTO.getName());
+		copyDtoToProduct(product, productDTO);
 
 		product = productRepository.save(product);
 
@@ -69,7 +75,7 @@ public class ProductService {
 
 			// instancia um objeto sem ir ao banco de dados
 			Product product = productRepository.getReferenceById(id);
-			//product.setName(productDTO.getName());
+			copyDtoToProduct(product, productDTO);
 
 			product = productRepository.save(product);
 
@@ -78,6 +84,22 @@ public class ProductService {
 		} catch (EntityNotFoundException e) {
 
 			throw new ResourceNotFoundException("Categoria não encontrada: " + id);
+		}
+	}
+
+	private void copyDtoToProduct(Product product, ProductDTO productDTO) {
+
+		product.setName(productDTO.getName());
+		product.setDescription(productDTO.getDescription());
+		product.setPrice(productDTO.getPrice());
+		product.setImgUrl(productDTO.getImgUrl());
+		product.setDate(productDTO.getDate());
+
+		product.getCategories().clear();
+		for (CategoryDTO categoryDTO : productDTO.getCategories()) {
+
+			Category categegory = categoryRepository.getReferenceById(categoryDTO.getId());
+			product.getCategories().add(categegory);
 		}
 	}
 
