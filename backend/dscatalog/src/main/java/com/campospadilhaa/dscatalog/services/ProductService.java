@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +31,22 @@ public class ProductService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
+	// alternativo ao método baixo
 	public Page<ProductDTO> findAllPaged(PageRequest pageRequest){
 
 		Page<Product> listProduct = productRepository.findAll(pageRequest);
+
+		Page<ProductDTO> listProductDTO =
+				listProduct
+					.map( product -> new ProductDTO(product));
+
+		return listProductDTO;
+	}
+
+	// alternativo ao método acima
+	public Page<ProductDTO> findAllPaged(Pageable peageble){
+
+		Page<Product> listProduct = productRepository.findAll(peageble);
 
 		Page<ProductDTO> listProductDTO =
 				listProduct
