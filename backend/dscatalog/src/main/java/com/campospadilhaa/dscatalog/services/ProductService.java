@@ -121,7 +121,7 @@ public class ProductService {
 	public void delete(Long id) {
 
 		if (!productRepository.existsById(id)) {
-			throw new ResourceNotFoundException("Categoria não encontrada");
+			throw new ResourceNotFoundException("Produto não encontrado");
 		}
 
 		try {
