@@ -19,6 +19,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.campospadilhaa.dscatalog.dto.ProductDTO;
 import com.campospadilhaa.dscatalog.services.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/products")
 public class ProductResource {
@@ -62,7 +64,8 @@ public class ProductResource {
 	}	
 
 	@PostMapping
-	public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO productDTO){
+	//public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO productDTO){
+	public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO productDTO){
 
 		productDTO = productService.insert(productDTO);
 
@@ -76,7 +79,8 @@ public class ProductResource {
 	}
 
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO productDTO){
+	//public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO productDTO){
+	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @Valid @RequestBody ProductDTO productDTO){
 
 		productDTO = productService.update(id, productDTO);
 

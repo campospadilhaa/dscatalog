@@ -6,13 +6,20 @@ import java.util.Set;
 
 import com.campospadilhaa.dscatalog.entities.User;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class UserDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+
+	@NotBlank(message = "Campo obrigatório")
 	private String firstName;
 	private String lastName;
+
+	@Email(message = "Informe um e-mail válido")
 	private String email;
 
 	private Set<RoleDTO> roles = new HashSet<>();
