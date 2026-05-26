@@ -1,5 +1,8 @@
 package com.campospadilhaa.dscatalog.dto;
 
+import com.campospadilhaa.dscatalog.services.validation.UserInsertValid;
+
+@UserInsertValid // utilizando a anotation criada para validar o e-mail
 public class UserInsertDTO extends UserDTO {
 
 	private static final long serialVersionUID = 1L;
