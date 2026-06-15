@@ -1,4 +1,4 @@
-package com.campospadilhaa.dscatalog.factory;
+package com.campospadilhaa.dscatalog.tests;
 
 import java.time.Instant;
 

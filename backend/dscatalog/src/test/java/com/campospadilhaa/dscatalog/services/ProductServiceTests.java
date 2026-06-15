@@ -21,11 +21,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.campospadilhaa.dscatalog.dto.ProductDTO;
 import com.campospadilhaa.dscatalog.entities.Category;
 import com.campospadilhaa.dscatalog.entities.Product;
-import com.campospadilhaa.dscatalog.factory.Factory;
 import com.campospadilhaa.dscatalog.repositories.CategoryRepository;
 import com.campospadilhaa.dscatalog.repositories.ProductRepository;
 import com.campospadilhaa.dscatalog.services.exceptions.DatabaseException;
 import com.campospadilhaa.dscatalog.services.exceptions.ResourceNotFoundException;
+import com.campospadilhaa.dscatalog.tests.Factory;
 
 import jakarta.persistence.EntityNotFoundException;
 

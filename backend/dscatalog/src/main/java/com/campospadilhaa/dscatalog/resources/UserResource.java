@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +49,7 @@ public class UserResource {
 		return ResponseEntity.ok().body(list);
 	}*/
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	// alternativo ao método acima
 	@GetMapping
 	public ResponseEntity<Page<UserDTO>> findAll(Pageable pageable){
@@ -57,6 +59,7 @@ public class UserResource {
 		return ResponseEntity.ok().body(list);
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<UserDTO> findById(@PathVariable Long id){
 
@@ -65,6 +68,7 @@ public class UserResource {
 		return ResponseEntity.ok().body(userDTO);
 	}	
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PostMapping
 	//public ResponseEntity<UserDTO> insert(@RequestBody UserInsertDTO userInsertDTO){
 	public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserInsertDTO userInsertDTO){
@@ -80,6 +84,7 @@ public class UserResource {
 		return ResponseEntity.created(uri).body(userDTO);
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@PutMapping(value = "/{id}")
 	//public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO userDTO){
 	//public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO){
@@ -91,6 +96,7 @@ public class UserResource {
 		return ResponseEntity.ok().body(userDTO);
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id){
 

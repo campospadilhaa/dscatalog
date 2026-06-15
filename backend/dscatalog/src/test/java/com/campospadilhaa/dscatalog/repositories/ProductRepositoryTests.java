@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.campospadilhaa.dscatalog.entities.Product;
-import com.campospadilhaa.dscatalog.factory.Factory;
+import com.campospadilhaa.dscatalog.tests.Factory;
 
 // Carrega somente os componentes relacionados ao Spring Data JPA. Cada teste é transacional e dá rollback ao final. (teste de unidade: repository)
 @DataJpaTest

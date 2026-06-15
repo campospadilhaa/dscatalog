@@ -12,6 +12,7 @@ import com.devsuperior.demo.config.SecurityConfig;
 public class DemoApplication implements CommandLineRunner {
 
 	private final SecurityConfig securityConfig;
+
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 

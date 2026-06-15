@@ -1,5 +1,6 @@
 package com.campospadilhaa.dscatalog.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,7 @@ import com.campospadilhaa.dscatalog.dto.UserInsertDTO;
 import com.campospadilhaa.dscatalog.dto.UserUpdateDTO;
 import com.campospadilhaa.dscatalog.entities.Role;
 import com.campospadilhaa.dscatalog.entities.User;
+import com.campospadilhaa.dscatalog.projections.UserDetailsProjection;
 import com.campospadilhaa.dscatalog.repositories.RoleRepository;
 import com.campospadilhaa.dscatalog.repositories.UserRepository;
 import com.campospadilhaa.dscatalog.services.exceptions.DatabaseException;
@@ -26,7 +31,7 @@ import com.campospadilhaa.dscatalog.services.exceptions.ResourceNotFoundExceptio
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -35,7 +40,7 @@ public class UserService {
 	RoleRepository roleRepository;
 
 	@Autowired
-	private BCryptPasswordEncoder cryptPasswordEncoder; // classe do tipo @Configuration criada para criptografar a senha
+	private PasswordEncoder passwordEncoder; // classe do tipo @Configuration criada para criptografar a senha
 
 	// alternativo ao método baixo
 	public Page<UserDTO> findAllPaged(PageRequest pageRequest){
@@ -86,7 +91,7 @@ public class UserService {
 		copyDtoToUser(user, userInsertDTO);
 
 		//user.setPassword(userInsertDTO.getPassowrd());
-		user.setPassword( cryptPasswordEncoder.encode( userInsertDTO.getPassword() ));
+		user.setPassword( passwordEncoder.encode( userInsertDTO.getPassword() ));
 
 		user = userRepository.save(user);
 
@@ -140,5 +145,25 @@ public class UserService {
     	catch (DataIntegrityViolationException e) {
         	throw new DatabaseException("Falha ao excluir a categoria, existem registros relacionados");
 	   	}
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+		List<UserDetailsProjection> listaUserDetailsProjection = userRepository.searchUserAndRolesByEmail(username);
+
+		if(listaUserDetailsProjection == null || listaUserDetailsProjection.isEmpty()) {
+			throw new UsernameNotFoundException("Usuário não encontrado");
+		}
+
+		User user = new User();
+		user.setEmail(username);
+		user.setPassword(listaUserDetailsProjection.get(0).getPassword());
+
+		for (UserDetailsProjection userDetailsProjection : listaUserDetailsProjection) {
+			user.addRole(new Role(userDetailsProjection.getRoleId(), userDetailsProjection.getAuthority()));
+		}
+
+		return user;
 	}
 }

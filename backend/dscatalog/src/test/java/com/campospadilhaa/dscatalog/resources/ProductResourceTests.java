@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
@@ -22,14 +23,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.campospadilhaa.dscatalog.dto.ProductDTO;
-import com.campospadilhaa.dscatalog.factory.Factory;
 import com.campospadilhaa.dscatalog.services.ProductService;
 import com.campospadilhaa.dscatalog.services.exceptions.DatabaseException;
 import com.campospadilhaa.dscatalog.services.exceptions.ResourceNotFoundException;
+import com.campospadilhaa.dscatalog.tests.Factory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 // Carrega o contexto somente até a camada Web, não chegando a instanciar componentes; services...
-@WebMvcTest(ProductResource.class)
+//@WebMvcTest(ProductResource.class)
+// substituído pela anotation abaixo para desconsiderar as configurações de segurança (spring security)
+@WebMvcTest(value = ProductResource.class, excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 public class ProductResourceTests {
 
 	@Autowired
