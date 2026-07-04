@@ -1,10 +1,14 @@
 package com.campospadilhaa.dscatalog.services;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,10 +19,12 @@ import com.campospadilhaa.dscatalog.dto.CategoryDTO;
 import com.campospadilhaa.dscatalog.dto.ProductDTO;
 import com.campospadilhaa.dscatalog.entities.Category;
 import com.campospadilhaa.dscatalog.entities.Product;
+import com.campospadilhaa.dscatalog.projections.ProductProjection;
 import com.campospadilhaa.dscatalog.repositories.CategoryRepository;
 import com.campospadilhaa.dscatalog.repositories.ProductRepository;
 import com.campospadilhaa.dscatalog.services.exceptions.DatabaseException;
 import com.campospadilhaa.dscatalog.services.exceptions.ResourceNotFoundException;
+import com.campospadilhaa.dscatalog.util.Utils;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -130,5 +136,60 @@ public class ProductService {
     	catch (DataIntegrityViolationException e) {
         	throw new DatabaseException("Falha ao excluir a categoria, existem registros relacionados");
 	   	}
+	}
+
+	/*
+	@Transactional(readOnly = true)
+	public Page<ProductProjection> findAllPaged(String name, String categoryId, Pageable pageable) {
+
+		List<Long> listaCategoryId = new ArrayList<>();
+
+		if(!categoryId.equals("0")) {
+
+			String[] vet = categoryId.split(",");
+			
+			List<String> listaCategoryIdStr = Arrays.asList(vet);
+			
+			//listaCategoryId = listaCategoryIdStr.stream().map(Long::parseLong).toList();
+			listaCategoryId = listaCategoryIdStr.stream().map(str -> Long.parseLong(str)).toList();
+		}
+
+		return productRepository.searchProducts(listaCategoryId, name, pageable);
+	}*/
+
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public Page<ProductDTO> findAllPaged(String name, String categoryId, Pageable pageable) {
+
+		List<Long> listaCategoryId = new ArrayList<>();
+
+		if(!categoryId.equals("0")) {
+
+			String[] vet = categoryId.split(",");
+			
+			List<String> listaCategoryIdStr = Arrays.asList(vet);
+			
+			//listaCategoryId = listaCategoryIdStr.stream().map(Long::parseLong).toList();
+			listaCategoryId = listaCategoryIdStr.stream().map(str -> Long.parseLong(str)).toList();
+		}
+
+		// primeiro obtém os itens da lista paginada
+		Page<ProductProjection> page = productRepository.searchProducts(listaCategoryId, name, pageable);
+
+		// obtém os ID's dos products retonados para a página
+		List<Long> listaProjectIds = page.map(obj -> obj.getId()).toList();
+
+		// retorna os objetos contendo as categories a partir dos ID's apurados
+		List<Product> listaProduct = productRepository.searchProductsWithCategories(listaProjectIds);
+
+		// ação para ordernar a lista considerando o parâmetro 'sort'
+		listaProduct = (List<Product>) Utils.relaplace(page.getContent(), listaProduct);
+
+		List<ProductDTO> listaProductDTO = listaProduct.stream().map(product -> new ProductDTO(product, product.getCategories())).toList();
+
+		// convert 
+		Page<ProductDTO> pageProductDTO = new PageImpl<>(listaProductDTO, page.getPageable(), page.getTotalElements());
+
+		return pageProductDTO;
 	}
 }

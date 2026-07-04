@@ -68,9 +68,18 @@ public class UserResource {
 		return ResponseEntity.ok().body(userDTO);
 	}	
 
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_OPERATOR', 'ROLE_ADMIN')")
+	@GetMapping(value = "/me")
+	public ResponseEntity<UserDTO> me(){
+
+		UserDTO userDTO = userService.findMe();
+
+		return ResponseEntity.ok().body(userDTO);
+	}	
+
+	/* restrição de ADMIN removida para que o próprio usuário possa se autocadastrar
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")*/
 	@PostMapping
-	//public ResponseEntity<UserDTO> insert(@RequestBody UserInsertDTO userInsertDTO){
 	public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserInsertDTO userInsertDTO){
 
 		UserDTO userDTO = userService.insert(userInsertDTO);

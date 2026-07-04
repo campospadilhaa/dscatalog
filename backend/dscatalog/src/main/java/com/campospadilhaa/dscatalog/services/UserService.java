@@ -34,6 +34,9 @@ import jakarta.persistence.EntityNotFoundException;
 public class UserService implements UserDetailsService {
 
 	@Autowired
+	private AuthService authService;
+
+	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
@@ -82,6 +85,17 @@ public class UserService implements UserDetailsService {
 		return userDTO;
 	}
 
+	// retorna o usuário logado
+	@Transactional(readOnly = true)
+	public UserDTO findMe(){
+
+		User user = authService.authenticated();
+
+		UserDTO userDTO = new UserDTO(user);
+
+		return userDTO;
+	}
+
 	@Transactional
 	/* utilizado o UserInsertDTO, herança de UserDTO para trabalhar a inserção da senha
 	public UserDTO insert(UserDTO userDTO) { */
@@ -90,6 +104,14 @@ public class UserService implements UserDetailsService {
 		User user = new User();
 		copyDtoToUser(user, userInsertDTO);
 
+		// o UserDTO inicialmente implementado permitia que através do endpoit chegasse a lista de Roles
+		// com o avançar do desenvolvimento, agora o próprio usuário que se cadastrar na aplicação
+		// então, passa a atribuir somente o Roler OPERATOR ao usuário
+		user.getRoles().clear();
+		Role role = roleRepository.findByAuthority("ROLE_OPERATOR");
+		user.getRoles().add(role);
+		////
+ 
 		//user.setPassword(userInsertDTO.getPassowrd());
 		user.setPassword( passwordEncoder.encode( userInsertDTO.getPassword() ));
 

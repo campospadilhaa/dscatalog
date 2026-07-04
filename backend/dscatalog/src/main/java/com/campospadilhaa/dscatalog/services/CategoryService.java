@@ -1,6 +1,8 @@
 package com.campospadilhaa.dscatalog.services;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,7 +27,6 @@ public class CategoryService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
-	/*
 	@Transactional(readOnly = true)
 	public List<CategoryDTO> findAll(){
 
@@ -38,7 +39,7 @@ public class CategoryService {
 					.collect(Collectors.toList());
 
 		return listCategoryDTO;
-	}*/
+	}
 
 	// alternativo ao método baixo
 	public Page<CategoryDTO> findAllPaged(PageRequest pageRequest){

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -47,14 +48,38 @@ public class ProductResource {
 		return ResponseEntity.ok().body(list);
 	}*/
 
+	/*
+	@GetMapping
+	public ResponseEntity<Page<ProductProjection>> findAllTestQuery(
+			@RequestParam(name = "name", defaultValue = "") String name,
+			@RequestParam(name = "categoryId", defaultValue = "0") String categoryId,
+			Pageable pageable){
+
+		Page<ProductProjection> list = productService.findAllPaged(name, categoryId, pageable);
+
+		return ResponseEntity.ok().body(list);
+	}*/
+
+	@GetMapping
+	public ResponseEntity<Page<ProductDTO>> findAllPaged(
+			@RequestParam(name = "name", defaultValue = "") String name,
+			@RequestParam(name = "categoryId", defaultValue = "0") String categoryId,
+			Pageable pageable){
+
+		Page<ProductDTO> list = productService.findAllPaged(name, categoryId, pageable);
+
+		return ResponseEntity.ok().body(list);
+	}
+
 	// alternativo ao método acima
+	/*
 	@GetMapping
 	public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable){
 
 		Page<ProductDTO> list = productService.findAllPaged(pageable);
 
 		return ResponseEntity.ok().body(list);
-	}
+	}*/
 
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<ProductDTO> findById(@PathVariable Long id){
