@@ -21,19 +21,24 @@ public class ResourceExceptionHandler {
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<StandardErrorDTO> entityNotFound(ResourceNotFoundException e, HttpServletRequest request) {
+
 		HttpStatus status = HttpStatus.NOT_FOUND;
+
 		StandardErrorDTO err = new StandardErrorDTO();
 		err.setTimestamp(Instant.now());
 		err.setStatus(status.value());
 		err.setError("Resource not found");
 		err.setMessage(e.getMessage());
 		err.setPath(request.getRequestURI());
+
 		return ResponseEntity.status(status).body(err);
 	}	
 	
 	@ExceptionHandler(DatabaseException.class)
 	public ResponseEntity<StandardErrorDTO> database(DatabaseException e, HttpServletRequest request) {
+
 		HttpStatus status = HttpStatus.BAD_REQUEST;
+
 		StandardErrorDTO err = new StandardErrorDTO();
 		err.setTimestamp(Instant.now());
 		err.setStatus(status.value());
@@ -45,7 +50,9 @@ public class ResourceExceptionHandler {
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ValidationErrorDTO> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
+
 		HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+
 		ValidationErrorDTO err = new ValidationErrorDTO();
 		err.setTimestamp(Instant.now());
 		err.setStatus(status.value());

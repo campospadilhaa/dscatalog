@@ -1,5 +1,10 @@
 package com.devsuperior.movieflix.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.devsuperior.movieflix.entities.Movie;
+
 public class MovieDetailsDTO {
 
     private Long id;
@@ -9,8 +14,25 @@ public class MovieDetailsDTO {
     private String imgUrl;
     private String synopsis;
     private GenreDTO genre;
+    private List<ReviewDetailsDTO> listaReviewDetailsDTO = new ArrayList<>();
 
-    public Long getId() {
+	public MovieDetailsDTO(Movie movie) {
+
+		this.id = movie.getId();
+		this.title = movie.getTitle();
+		this.subTitle = movie.getSubTitle();
+		this.year = movie.getYear();
+		this.imgUrl = movie.getImgUrl();
+		this.synopsis = movie.getSynopsis();
+
+		this.genre = new GenreDTO(movie.getGenre());
+
+		if(movie.getReviews()!=null && !movie.getReviews().isEmpty()) {
+			movie.getReviews().forEach( review -> this.listaReviewDetailsDTO.add( new ReviewDetailsDTO( review.getId(), review.getText(), review.getUser().getName() ) ) );
+		}
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -64,5 +86,13 @@ public class MovieDetailsDTO {
 
 	public void setGenre(GenreDTO genre) {
 		this.genre = genre;
+	}
+
+	public List<ReviewDetailsDTO> getListaReviewDetailsDTO() {
+		return listaReviewDetailsDTO;
+	}
+
+	public void setListaReviewDetailsDTO(List<ReviewDetailsDTO> listaReviewDetailsDTO) {
+		this.listaReviewDetailsDTO = listaReviewDetailsDTO;
 	}
 }
