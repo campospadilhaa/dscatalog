@@ -132,6 +132,7 @@ public class OrderServiceTests {
 		Mockito.doNothing().when(authService).validateSelfOrAdmin(ArgumentMatchers.any());
 
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			@SuppressWarnings("unused")
 			OrderDTO orderDTOresult = orderService.findById(nonExistingOrderId);
 		});
 	}
