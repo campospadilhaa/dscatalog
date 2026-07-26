@@ -1,5 +1,6 @@
 package com.campospadilhaa.dscatalog.services;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,9 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.campospadilhaa.dscatalog.dto.CategoryDTO;
 import com.campospadilhaa.dscatalog.dto.ProductDTO;
+import com.campospadilhaa.dscatalog.dto.UriDTO;
 import com.campospadilhaa.dscatalog.entities.Category;
 import com.campospadilhaa.dscatalog.entities.Product;
 import com.campospadilhaa.dscatalog.projections.ProductProjection;
@@ -36,6 +39,9 @@ public class ProductService {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
+
+	@Autowired
+	private S3Service s3Service;
 
 	// alternativo ao método baixo
 	public Page<ProductDTO> findAllPaged(PageRequest pageRequest){
@@ -191,5 +197,14 @@ public class ProductService {
 		Page<ProductDTO> pageProductDTO = new PageImpl<>(listaProductDTO, page.getPageable(), page.getTotalElements());
 
 		return pageProductDTO;
+	}
+
+	public UriDTO uploadFile(MultipartFile file) {
+
+		URL url = s3Service.uploadFile(file);
+
+		UriDTO uriDTO = new UriDTO(url.toString());
+
+		return uriDTO;
 	}
 }
