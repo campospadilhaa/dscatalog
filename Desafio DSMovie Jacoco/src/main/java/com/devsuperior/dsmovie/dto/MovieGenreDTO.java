@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
-public class MovieDTO {
+public class MovieGenreDTO {
 
 	private static final DecimalFormat df = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.US));
 
@@ -35,20 +35,23 @@ public class MovieDTO {
 	@URL(message = "Field must be a valid url")
 	private String image;
 
-	public MovieDTO() {
+	private String genre;
+
+	public MovieGenreDTO() {
 
 	}
 
-	public MovieDTO(Long id, String title, Double score, Integer count, String image) {
+	public MovieGenreDTO(Long id, String title, Double score, Integer count, String image, String genre) {
 		this.id = id;
 		this.title = title;
 		this.score = Double.valueOf(df.format(score));
 		this.count = count;
 		this.image = image;
+		this.genre = genre;
 	}
 
-	public MovieDTO(MovieEntity movie) {
-		this(movie.getId(), movie.getTitle(), movie.getScore(), movie.getCount(), movie.getImage());
+	public MovieGenreDTO(MovieEntity movie) {
+		this(movie.getId(), movie.getTitle(), movie.getScore(), movie.getCount(), movie.getImage(), movie.getGenre().getName());
 	}
 
 	public Long getId() {
@@ -69,6 +72,14 @@ public class MovieDTO {
 
 	public String getImage() {
 		return image;
+	}
+
+	public String getGenre() {
+		return genre;
+	}
+
+	public void setGenre(String genre) {
+		this.genre = genre;
 	}
 
 	@Override

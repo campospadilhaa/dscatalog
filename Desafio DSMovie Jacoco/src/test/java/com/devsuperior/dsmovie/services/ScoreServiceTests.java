@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.devsuperior.dsmovie.dto.MovieDTO;
+import com.devsuperior.dsmovie.dto.MovieGenreDTO;
 import com.devsuperior.dsmovie.dto.ScoreDTO;
 import com.devsuperior.dsmovie.entities.MovieEntity;
 import com.devsuperior.dsmovie.entities.ScoreEntity;
@@ -72,7 +72,7 @@ public class ScoreServiceTests {
 
 		Mockito.when(movieRepository.save(ArgumentMatchers.any())).thenReturn(movieEntity);
 
-		MovieDTO movieDTOResult = scoreService.saveScore(scoreDTO);
+		MovieGenreDTO movieDTOResult = scoreService.saveScore(scoreDTO);
 
 		Assertions.assertNotNull(movieDTOResult);
 	}
@@ -88,7 +88,7 @@ public class ScoreServiceTests {
 
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
 			@SuppressWarnings("unused")
-			MovieDTO movieDTOResult = scoreService.saveScore(scoreDTO);
+			MovieGenreDTO movieDTOResult = scoreService.saveScore(scoreDTO);
 		});		
 	}
 }

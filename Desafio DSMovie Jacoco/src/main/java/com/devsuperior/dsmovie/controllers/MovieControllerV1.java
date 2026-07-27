@@ -29,9 +29,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/movies") // versionamento por URI
+@RequestMapping(value = "v1/movies") // versionamento por URI
 @Tag(name = "Movies", description = "Controller for Movie")
-public class MovieController {
+public class MovieControllerV1 {
 
 	// para versionamento existem 2 (dois) DTO's, a saber:
 	// MovieDTO e MovieGenreDTO
@@ -47,22 +47,7 @@ public class MovieController {
 		    }
 		)
 	@GetMapping(produces = "application/json")
-	public Page<MovieDTO> findAll(
-			@RequestParam(value="title", defaultValue = "") String title, 
-			Pageable pageable) {
-		return service.findAll(title, pageable);
-	}
-
-	@Operation(
-		    description = "Get all movies",
-		    summary = "List all movies",
-		    responses = {
-		         @ApiResponse(description = "Ok", responseCode = "200")
-		    }
-		)
-	//@GetMapping(produces = "application/json")
-	@GetMapping(produces = "application/vdn-devsuperior.dsmovie-v1+json") // versionamento por Media Type
-	public Page<MovieGenreDTO> findAllV1(
+	public Page<MovieGenreDTO> findAll(
 			@RequestParam(value="title", defaultValue = "") String title, 
 			Pageable pageable) {
 		return service.findAllMovieGenre(title, pageable);
@@ -77,21 +62,7 @@ public class MovieController {
 		    }
 		)
 	@GetMapping(value = "/{id}", produces = "application/json")
-	public MovieDTO findById(@PathVariable Long id) {
-		return service.findById(id);
-	}
-
-	@Operation(
-		    description = "Get movie by id",
-		    summary = "Get movie by id",
-		    responses = {
-		         @ApiResponse(description = "Ok", responseCode = "200"),
-		         @ApiResponse(description = "Not Found", responseCode = "404")
-		    }
-		)
-	//@GetMapping(value = "/{id}", produces = "application/json")
-	@GetMapping(value = "/{id}", produces = "application/vdn-devsuperior.dsmovie-v1+json") // versionamento por Media Type
-	public MovieGenreDTO findByIdV1(@PathVariable Long id) {
+	public MovieGenreDTO findById(@PathVariable Long id) {
 		return service.findByIdMovieGenre(id);
 	}
 
